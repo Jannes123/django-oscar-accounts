@@ -111,7 +111,7 @@ class Account(models.Model):
 
     # Accounts are sometimes restricted to only work on a specific range of
     # products.  This is the only link with Oscar.
-    product_range = models.ForeignKey('offer.Range', null=True, blank=True)
+    #product_range = models.ForeignKey('offer.Range', null=True, blank=True)
 
     # Allow accounts to be restricted for products only (ie can't be used to
     # pay for shipping)
@@ -192,15 +192,16 @@ class Account(models.Model):
             total = order_total - shipping_total
         else:
             total = order_total
-        if not self.product_range:
-            return min(total, self.balance)
-        range_total = D('0.00')
-        for line in basket.all_lines():
-            if self.product_range.contains_product(line.product):
-                range_total += line.line_price_incl_tax_and_discounts
-        if self.can_be_used_for_non_products:
-            range_total += shipping_total
-        return min(range_total, self.balance)
+
+        return min(total, self.balance)
+        #NOT USING PRODUCT RANGE or OFFER RANGE FOR CUSTOM CALLALL PROJECT
+        #range_total = D('0.00')
+        # for line in basket.all_lines():
+        #     if self.product_range.contains_product(line.product):
+        #         range_total += line.line_price_incl_tax_and_discounts
+        #if self.can_be_used_for_non_products:
+        #    range_total += shipping_total
+        #return min(range_total, self.balance)
 
     def is_open(self):
         return self.status == self.__class__.OPEN
